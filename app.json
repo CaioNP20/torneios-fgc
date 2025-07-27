@@ -1,0 +1,38 @@
+{
+  "expo": {
+    "name": "TorneiosFGC",
+    "slug": "TorneiosFGC",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.caionp20.TorneiosFGC"
+    },
+    "web": {
+      "favicon": "./assets/icon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6d71d670-a431-46f3-bb31-2cd798274f41"
+      }
+    },
+    "plugins": [
+      "react-native-add-calendar-event"
+    ]
+  }
+}
