@@ -7,7 +7,7 @@ Siga os passos abaixo para instalar o aplicativo manualmente no seu celular Andr
 
 ### 1. Baixe o arquivo `.apk`
 - Acesse o link oficial de download:
-  👉 [📦 Download do APK]([https://github.com/seu-usuario/seu-repositorio/releases](https://github.com/CaioNP20/torneios-fgc/releases/download/v1.0.1/torneios-fgc.apk))
+  👉 [📦 Download do APK]([https://github.com/seu-usuario/seu-repositorio/releases](https://github.com/CaioNP20/torneios-fgc/releases/download/v1.0.1/torneios-fgc.apk)])
 
 ### 2. Habilite "Fontes desconhecidas"
 - No seu celular, vá em **Configurações > Segurança (ou Privacidade)**. (Pesquisar "desconhecida" deve aparecer).
