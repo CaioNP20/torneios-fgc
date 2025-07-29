@@ -36,6 +36,8 @@ const games = [
   { label: 'Granblue Fantasy Versus: Rising', value: 'GBVSR', videogameId: 48548 },
   { label: 'Guilty Gear: Strive', value: 'GGST', videogameId: 33945 },
   { label: 'Mortal Kombat 1', value: 'MK1', videogameId: 48599 },
+  { label: 'Pocket Bravery', value: 'PB', videogameId: 44108 },
+  { label: 'SAMURAI SHODOWN', value: 'SS', videogameId: 3568 },
   { label: 'Street Fighter 6', value: 'SF6', videogameId: 43868 },
   { label: 'Tekken 8', value: 'TEKKEN8', videogameId: 49783 },
   { label: 'The King of Fighters XV', value: 'KOF XV', videogameId: 36963 },
@@ -135,10 +137,10 @@ const countries = [
 // Componente principal da tela de torneios
 export default function TournamentsScreen() {
   // Estados para filtros
-  const [selectedGame, setSelectedGame] = useState('MK1');
-  const [selectedTournamentType, setSelectedTournamentType] = useState('Online/Offline');
-  const [selectedCountry, setSelectedCountry] = useState('BR');
-  const [selectedRegion, setSelectedRegion] = useState('south-america');
+  const [selectedGame, setSelectedGame] = useState(null);
+  const [selectedTournamentType, setSelectedTournamentType] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedRegion, setSelectedRegion] = useState(null);
 
   // Estados para carregamento e dados dos torneios
   const [loading, setLoading] = useState(false);
@@ -146,6 +148,9 @@ export default function TournamentsScreen() {
 
   // Controla se os filtros estão recolhidos (usado no componente Collapsible)
   const [filtersCollapsed, setFiltersCollapsed] = useState(false);
+
+  // Controla se os filtros da última sessão já carregaram
+  const [filtersLoaded, setFiltersLoaded] = useState(false);
 
   // Carrega os filtros salvos da última sessão
   useEffect(() => {
@@ -156,12 +161,15 @@ export default function TournamentsScreen() {
         const savedCountry = await AsyncStorage.getItem('selectedCountry');
         const savedRegion = await AsyncStorage.getItem('selectedRegion');
 
-        if (savedGame) setSelectedGame(savedGame);
-        if (savedType) setSelectedTournamentType(savedType);
-        if (savedCountry) setSelectedCountry(savedCountry);
-        if (savedRegion) setSelectedRegion(savedRegion);
+        setSelectedGame(savedGame || 'MK1');
+        setSelectedTournamentType(savedType || 'Online/Offline');
+        setSelectedCountry(savedCountry || 'BR');
+        setSelectedRegion(savedRegion || 'south-america');
+
+        setFiltersLoaded(true); // marca que os filtros foram carregados
       } catch (e) {
         console.error('Erro carregando filtros', e);
+        setFiltersLoaded(true); // mesmo em erro, libera renderização
       }
     })();
   }, []);
@@ -267,7 +275,9 @@ export default function TournamentsScreen() {
   // Busca torneios online da API Start.gg, com filtro opcional por região
   const fetchOnlineTournaments = async () => {
     const now = Math.floor(Date.now() / 1000);
-    const oneWeekFromNow = now + 7 * 24 * 60 * 60;
+    const twoWeeksFromNow = now + 14 * 24 * 60 * 60;
+
+    console.log(now, twoWeeksFromNow);
 
     const game = games.find(g => g.value === selectedGame);
     if (!game) {
@@ -317,7 +327,7 @@ export default function TournamentsScreen() {
           variables: {
             videogameId: game.videogameId,
             after: now,
-            before: oneWeekFromNow,
+            before: twoWeeksFromNow,
           },
         }),
       });
@@ -384,128 +394,133 @@ export default function TournamentsScreen() {
     <>
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
-
-          <Collapsible collapsed={filtersCollapsed} duration={300}>
-            {/* Linha 1: Jogo e Tipo */}
-            <View style={styles.pickerRow}>
-              <View style={styles.pickerContainer}>
-                <Text style={styles.pickerLabel}>Jogo</Text>
-                <Picker
-                  selectedValue={selectedGame}
-                  onValueChange={setSelectedGame}
-                  style={styles.picker}
-                >
-                  {games.map(game => (
-                    <Picker.Item key={game.value} label={game.label} value={game.value} />
-                  ))}
-                </Picker>
-              </View>
-
-              <View style={styles.pickerContainer}>
-                <Text style={styles.pickerLabel}>Tipo</Text>
-                <Picker
-                  selectedValue={selectedTournamentType}
-                  onValueChange={setSelectedTournamentType}
-                  style={styles.picker}
-                >
-                  <Picker.Item label="Online/Offline" value="Online/Offline" />
-                  <Picker.Item label="Online" value="Online" />
-                  <Picker.Item label="Offline" value="Offline" />
-                </Picker>
-              </View>
-            </View>
-
-            {/* Linha 2: País e Região */}
-            <View style={styles.pickerRow}>
-              <View style={styles.pickerContainer}>
-                <Text style={styles.pickerLabel}>País (Offline)</Text>
-                <Picker
-                  selectedValue={selectedCountry}
-                  onValueChange={setSelectedCountry}
-                  style={styles.picker}
-                >
-                  {countries.map(country => (
-                    <Picker.Item key={country.value} label={country.label} value={country.value} />
-                  ))}
-                </Picker>
-              </View>
-
-              <View style={styles.pickerContainer}>
-                <Text style={styles.pickerLabel}>Região (Online)</Text>
-                <Picker
-                  selectedValue={selectedRegion}
-                  onValueChange={setSelectedRegion}
-                  style={styles.picker}
-                >
-                  {regions.map((region) => (
-                    <Picker.Item key={region.value} label={region.label} value={region.value} />
-                  ))}
-                </Picker>
-              </View>
-            </View>
-
-            {/* Botão Pesquisar */}
-            <TouchableOpacity
-              onPress={() => {
-                handleSearch();
-                setFiltersCollapsed(true); // recolhe os filtros
-              }}
-              style={styles.button}
-            >
-              <Text style={styles.buttonText}>Pesquisar</Text>
-            </TouchableOpacity>
-          </Collapsible>
-
-          {/* Botão para mostrar filtros se estiverem recolhidos */}
-          {filtersCollapsed && (
-            <TouchableOpacity onPress={() => setFiltersCollapsed(false)}>
-              <Text style={styles.showFilters}>
-                🔍 Mostrar filtros
-              </Text>
-            </TouchableOpacity>
-          )}
-
-          {/* Indicador de carregamento ou lista de torneios */}
-          {loading ? (
-            <ActivityIndicator size="large" />
-          ) : (
-            <FlatList
-              style={styles.torneios}
-              data={getDisplayedTournaments()}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.card}>
-                  <Text style={styles.title}>{item.name}</Text>
-                  <Text style={styles.subtitle}>
-                    Início: {new Date(item.startAt * 1000).toLocaleDateString('pt-BR')} às{' '}
-                    {new Date(item.startAt * 1000).toLocaleTimeString('pt-BR', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}{' '}
-                    {item.addrState ? `📍${item.addrState}` : '📶 Online'}
-                  </Text>
-                  <View style={styles.buttons}>
-                    <TouchableOpacity
-                      style={styles.customButton}
-                      onPress={() => openLink(`https://start.gg${item.url}/register`)}
+          {filtersLoaded ? (
+            <>
+              <Collapsible collapsed={filtersCollapsed} duration={300}>
+                {/* Linha 1: Jogo e Tipo */}
+                <View style={styles.pickerRow}>
+                  <View style={styles.pickerContainer}>
+                    <Text style={styles.pickerLabel}>Jogo</Text>
+                    <Picker
+                      selectedValue={selectedGame}
+                      onValueChange={setSelectedGame}
+                      style={styles.picker}
                     >
-                      <Text style={styles.buttonText}>Inscrever-se</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.customButton}
-                      onPress={() => addToGoogleCalendar(item)}
+                      {games.map(game => (
+                        <Picker.Item key={game.value} label={game.label} value={game.value} />
+                      ))}
+                    </Picker>
+                  </View>
+
+                  <View style={styles.pickerContainer}>
+                    <Text style={styles.pickerLabel}>Tipo</Text>
+                    <Picker
+                      selectedValue={selectedTournamentType}
+                      onValueChange={setSelectedTournamentType}
+                      style={styles.picker}
                     >
-                      <Text style={styles.buttonText}>🗓️ Adicionar ao Google Calendar 🗓️</Text>
-                    </TouchableOpacity>
+                      <Picker.Item label="Online/Offline" value="Online/Offline" />
+                      <Picker.Item label="Online" value="Online" />
+                      <Picker.Item label="Offline" value="Offline" />
+                    </Picker>
                   </View>
                 </View>
+
+                {/* Linha 2: País e Região */}
+                <View style={styles.pickerRow}>
+                  <View style={styles.pickerContainer}>
+                    <Text style={styles.pickerLabel}>País (Offline)</Text>
+                    <Picker
+                      selectedValue={selectedCountry}
+                      onValueChange={setSelectedCountry}
+                      style={styles.picker}
+                    >
+                      {countries.map(country => (
+                        <Picker.Item key={country.value} label={country.label} value={country.value} />
+                      ))}
+                    </Picker>
+                  </View>
+
+                  <View style={styles.pickerContainer}>
+                    <Text style={styles.pickerLabel}>Região (Online)</Text>
+                    <Picker
+                      selectedValue={selectedRegion}
+                      onValueChange={setSelectedRegion}
+                      style={styles.picker}
+                    >
+                      {regions.map((region) => (
+                        <Picker.Item key={region.value} label={region.label} value={region.value} />
+                      ))}
+                    </Picker>
+                  </View>
+                </View>
+
+                {/* Botão Pesquisar */}
+                <TouchableOpacity
+                  onPress={() => {
+                    handleSearch();
+                    setFiltersCollapsed(true); // recolhe os filtros
+                  }}
+                  style={styles.button}
+                >
+                  <Text style={styles.buttonText}>Pesquisar</Text>
+                </TouchableOpacity>
+              </Collapsible>
+
+              {/* Botão para mostrar filtros se estiverem recolhidos */}
+              {filtersCollapsed && (
+                <TouchableOpacity onPress={() => setFiltersCollapsed(false)}>
+                  <Text style={styles.showFilters}>
+                    🔍 Mostrar filtros
+                  </Text>
+                </TouchableOpacity>
               )}
-              ListEmptyComponent={() => (
-                <Text style={{ textAlign: 'center', marginTop: 20 }}>
-                  Nenhum torneio encontrado.
-                </Text>
+
+              {/* Indicador de carregamento ou lista de torneios */}
+              {loading ? (
+                <ActivityIndicator size="large" />
+              ) : (
+                <FlatList
+                  style={styles.torneios}
+                  data={getDisplayedTournaments()}
+                  keyExtractor={(item) => item.id.toString()}
+                  renderItem={({ item }) => (
+                    <View style={styles.card}>
+                      <Text style={styles.title}>{item.name}</Text>
+                      <Text style={styles.subtitle}>
+                        Início: {new Date(item.startAt * 1000).toLocaleDateString('pt-BR')} às{' '}
+                        {new Date(item.startAt * 1000).toLocaleTimeString('pt-BR', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}{' '}
+                        {item.addrState ? `📍${item.addrState}` : '📶 Online'}
+                      </Text>
+                      <View style={styles.buttons}>
+                        <TouchableOpacity
+                          style={styles.customButton}
+                          onPress={() => openLink(`https://start.gg${item.url}/register`)}
+                        >
+                          <Text style={styles.buttonText}>Inscrever-se</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          style={styles.customButton}
+                          onPress={() => addToGoogleCalendar(item)}
+                        >
+                          <Text style={styles.buttonText}>🗓️ Adicionar ao Google Calendar 🗓️</Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  )}
+                  ListEmptyComponent={() => (
+                    <Text style={{ textAlign: 'center', marginTop: 20 }}>
+                      Nenhum torneio encontrado.
+                    </Text>
+                  )}
+                />
               )}
-            />
+            </>
+          ) : (
+            <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center' }} />
           )}
         </View>
       </SafeAreaView>
