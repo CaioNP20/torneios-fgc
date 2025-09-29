@@ -34,7 +34,7 @@ const FaqScreen = () => {
     {
       id: '3',
       question: 'O app mostra todos os torneios online?',
-      answer: 'Não. Mostra apenas os que vão acontecer dentro de 7 dias, além disso, caso o dono do torneio seja de uma região diferente, pode não aparecer.',
+      answer: 'Não. Mostra apenas os que vão acontecer dentro de 14 dias, além disso, caso o dono do torneio seja de uma região diferente, pode não aparecer.',
     },
     {
       id: '4',
