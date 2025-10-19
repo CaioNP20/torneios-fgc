@@ -232,7 +232,7 @@ export default function TournamentsScreen() {
           query: `
             query TournamentsQuery($videogameId: ID!, $countryCode: String) {
               tournaments(query: {
-                perPage: 20
+                perPage: 40
                 page: 1
                 sortBy: "startAt asc"
                 filter: {
@@ -299,7 +299,7 @@ export default function TournamentsScreen() {
           query: `
             query TournamentsQuery($videogameId: ID!, $after: Timestamp, $before: Timestamp) {
               tournaments(query: {
-                perPage: 20
+                perPage: 40
                 page: 1
                 sortBy: "startAt asc"
                 filter: {
