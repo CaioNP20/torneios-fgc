@@ -28,21 +28,6 @@ import styles from '../styles/TournamentStyles';
 // Token de autenticação da API do Start.gg (armazenado em .env)
 import { STARTGG_TOKEN } from '@env';
 
-// Lista de jogos disponíveis com seus respectivos videogameIds utilizados pela API
-const games = [
-  { label: '2XKO', value: '2XKO', videogameId: 64423 },
-  { label: 'Brawlhalla', value: 'Brawlhalla', videogameId: 15 },
-  { label: 'Fatal Fury: COTW', value: 'FFCOTW', videogameId: 73221 },
-  { label: 'Granblue Fantasy Versus: Rising', value: 'GBVSR', videogameId: 48548 },
-  { label: 'Guilty Gear: Strive', value: 'GGST', videogameId: 33945 },
-  { label: 'Mortal Kombat 1', value: 'MK1', videogameId: 48599 },
-  { label: 'Pocket Bravery', value: 'PB', videogameId: 44108 },
-  { label: 'SAMURAI SHODOWN', value: 'SS', videogameId: 3568 },
-  { label: 'Street Fighter 6', value: 'SF6', videogameId: 43868 },
-  { label: 'Tekken 8', value: 'TEKKEN8', videogameId: 49783 },
-  { label: 'The King of Fighters XV', value: 'KOF XV', videogameId: 36963 },
-  { label: 'Under Night In-Birth II Sys:Celes', value: 'UNISC', videogameId: 50203 }
-];
 // Lista de países da América do Sul — usada para filtros regionais em torneios online
 const southAmericanCountries = [
   "Argentina", "Bolivia", "Brazil", "Chile", "Colombia",
@@ -151,6 +136,53 @@ export default function TournamentsScreen() {
 
   // Controla se os filtros da última sessão já carregaram
   const [filtersLoaded, setFiltersLoaded] = useState(false);
+
+  const [games, setGames] = useState([]);
+  const [gamesLoading, setGamesLoading] = useState(true);
+
+  // Carrega os jogos
+  useEffect(() => {
+    const loadGames = async () => {
+      try {
+        // tenta carregar cache primeiro
+        const cachedGames = await AsyncStorage.getItem('games');
+        if (cachedGames) {
+          setGames(JSON.parse(cachedGames));
+        }
+
+        // busca versão remota
+        const response = await fetch(
+          'https://raw.githubusercontent.com/CaioNP20/torneios-fgc/refs/heads/main/games.json'
+        );
+
+        if (!response.ok) {
+          throw new Error('Erro ao buscar games.json');
+        }
+
+        const remoteGames = await response.json();
+
+        // validação mínima
+        if (!Array.isArray(remoteGames)) {
+          throw new Error('Formato inválido de games.json');
+        }
+
+        setGames(remoteGames);
+        await AsyncStorage.setItem('games', JSON.stringify(remoteGames));
+      } catch (error) {
+        console.error('Erro carregando jogos:', error);
+        Alert.alert(
+          'Erro',
+          'Não foi possível carregar a lista de jogos. Usando dados locais.'
+        );
+      } finally {
+        setGamesLoading(false);
+      }
+    };
+
+    loadGames();
+  }, []);
+
+
 
   // Carrega os filtros salvos da última sessão
   useEffect(() => {
@@ -277,9 +309,8 @@ export default function TournamentsScreen() {
     const now = Math.floor(Date.now() / 1000);
     const twoWeeksFromNow = now + 14 * 24 * 60 * 60;
 
-    console.log(now, twoWeeksFromNow);
-
     const game = games.find(g => g.value === selectedGame);
+  
     if (!game) {
       Alert.alert('Erro', 'Jogo não encontrado.');
       return [];
@@ -389,6 +420,17 @@ export default function TournamentsScreen() {
 
   // Atualmente apenas retorna o array como está
   const getDisplayedTournaments = () => tournaments;
+
+  if (gamesLoading || !filtersLoaded) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <ActivityIndicator
+          size="large"
+          style={{ flex: 1, justifyContent: 'center' }}
+        />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <>
