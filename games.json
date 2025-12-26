@@ -1,15 +1,15 @@
 [
-  { label: '2XKO', value: '2XKO', videogameId: 64423 },
-  { label: 'Brawlhalla', value: 'Brawlhalla', videogameId: 15 },
-  { label: 'Fatal Fury: COTW', value: 'FFCOTW', videogameId: 73221 },
-  { label: 'Granblue Fantasy Versus: Rising', value: 'GBVSR', videogameId: 48548 },
-  { label: 'Guilty Gear: Strive', value: 'GGST', videogameId: 33945 },
-  { label: 'Mortal Kombat 1', value: 'MK1', videogameId: 48599 },
-  { label: 'Pocket Bravery', value: 'PB', videogameId: 44108 },
-  { label: 'SAMURAI SHODOWN', value: 'SS', videogameId: 3568 },
-  { label: 'Street Fighter 6', value: 'SF6', videogameId: 43868 },
-  { label: 'Tekken 8', value: 'TEKKEN8', videogameId: 49783 },
-  { label: 'The King of Fighters XV', value: 'KOF XV', videogameId: 36963 },
-  { label: 'Under Night In-Birth II Sys:Celes', value: 'UNISC', videogameId: 50203 }
-  { label: 'BlazBlue: Central Fiction', value: 'BBCF', videogameId: 37 }
+  { "label": "2XKO", "value": "2XKO", "videogameId": 64423 },
+  { "label": "Brawlhalla", "value": "Brawlhalla", "videogameId": 15 },
+  { "label": "Fatal Fury: COTW", "value": "FFCOTW", "videogameId": 73221 },
+  { "label": "Granblue Fantasy Versus: Rising", "value": "GBVSR", "videogameId": 48548 },
+  { "label": "Guilty Gear: Strive", "value": "GGST", "videogameId": 33945 },
+  { "label": "Mortal Kombat 1", "value": "MK1", "videogameId": 48599 },
+  { "label": "Pocket Bravery", "value": "PB", "videogameId": 44108 },
+  { "label": "SAMURAI SHODOWN", "value": "SS", "videogameId": 3568 },
+  { "label": "Street Fighter 6", "value": "SF6", "videogameId": 43868 },
+  { "label": "Tekken 8", "value": "TEKKEN8", "videogameId": 49783 },
+  { "label": "The King of Fighters XV", "value": "KOF XV", "videogameId": 36963 },
+  { "label": "Under Night In-Birth II Sys:Celes", "value": "UNISC", "videogameId": 50203 },
+  { "label": "BlazBlue: Central Fiction", "value": "BBCF", "videogameId": 37 }
 ]
