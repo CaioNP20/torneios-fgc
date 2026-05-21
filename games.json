@@ -14,5 +14,6 @@
   { "label": "Under Night In-Birth II Sys:Celes", "value": "UNISC", "videogameId": 50203 },
   { "label": "BlazBlue: Central Fiction", "value": "BBCF", "videogameId": 37 },
   { "label": "Mortal Kombat X", "value": "MKX", "videogameId": 22 },
-  { "label": "Mortal Kombat 11", "value": "MK11", "videogameId": 3200 }
+  { "label": "Mortal Kombat 11", "value": "MK11", "videogameId": 3200 },
+  { "label": "Injustice 2", "value": "IJ2", "videogameId": 35 }
 ]
